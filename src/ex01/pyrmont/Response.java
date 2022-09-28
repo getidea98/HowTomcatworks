@@ -28,6 +28,11 @@ public class Response {
         this.request = request;
     }
 
+    /**
+     * 返回 request 请求头中的静态信息
+     *
+     * @throws IOException
+     */
     public void sendStaticResource() throws IOException {
         String responseCode = "404";
         String responseCodeDesc = "File Not Found";
