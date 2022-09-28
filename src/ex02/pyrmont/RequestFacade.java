@@ -115,8 +115,7 @@ public class RequestFacade implements ServletRequest {
         request.setAttribute(key, value);
     }
 
-    public void setCharacterEncoding(String encoding)
-            throws UnsupportedEncodingException {
+    public void setCharacterEncoding(String encoding) throws UnsupportedEncodingException {
         request.setCharacterEncoding(encoding);
     }
 
