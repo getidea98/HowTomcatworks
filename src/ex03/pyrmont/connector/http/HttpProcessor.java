@@ -134,7 +134,7 @@ public class HttpProcessor {
 
     private void parseRequest(SocketInputStream input, OutputStream output) throws IOException, ServletException {
 
-        // Parse the incoming request line
+        // 读取request的第一行，并解析其中的method,uri,protocol数据
         input.readRequestLine(requestLine);
         String method = new String(requestLine.method, 0, requestLine.methodEnd);
         String uri = null;
@@ -146,13 +146,15 @@ public class HttpProcessor {
         } else if (requestLine.uriEnd < 1) {
             throw new ServletException("Missing HTTP request URI");
         }
-        // Parse any query parameters out of the request URI
+
+        // 支持uri 中带有请求参数
         int question = requestLine.indexOf("?");
         if (question >= 0) {
-            request.setQueryString(new String(requestLine.uri, question + 1,
-                    requestLine.uriEnd - question - 1));
+            // uri中带有请求参数，并处理这些参数仅仅是截取而已，具体的参数值在获取时才会被计算出来（提升性能）
+            request.setQueryString(new String(requestLine.uri, question + 1, requestLine.uriEnd - question - 1));
             uri = new String(requestLine.uri, 0, question);
         } else {
+            // uri 中没有请求参数
             request.setQueryString(null);
             uri = new String(requestLine.uri, 0, requestLine.uriEnd);
         }
