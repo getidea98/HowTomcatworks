@@ -33,8 +33,7 @@ public class HttpProcessor {
     /**
      * The string manager for this package.
      */
-    protected StringManager sm =
-            StringManager.getManager("ex03.pyrmont.connector.http");
+    protected StringManager sm = StringManager.getManager("ex03.pyrmont.connector.http");
 
     public void process(Socket socket) {
         SocketInputStream input = null;
@@ -133,13 +132,11 @@ public class HttpProcessor {
     }
 
 
-    private void parseRequest(SocketInputStream input, OutputStream output)
-            throws IOException, ServletException {
+    private void parseRequest(SocketInputStream input, OutputStream output) throws IOException, ServletException {
 
         // Parse the incoming request line
         input.readRequestLine(requestLine);
-        String method =
-                new String(requestLine.method, 0, requestLine.methodEnd);
+        String method = new String(requestLine.method, 0, requestLine.methodEnd);
         String uri = null;
         String protocol = new String(requestLine.protocol, 0, requestLine.protocolEnd);
 
