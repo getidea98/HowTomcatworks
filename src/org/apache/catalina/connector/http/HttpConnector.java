@@ -40,8 +40,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 
-public final class HttpConnector
-        implements Connector, Lifecycle, Runnable {
+public final class HttpConnector implements Connector, Lifecycle, Runnable {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -770,8 +769,7 @@ public final class HttpConnector
      */
     void recycle(HttpProcessor processor) {
 
-        //        if (debug >= 2)
-        //            log("recycle: Recycling processor " + processor);
+
         processors.push(processor);
 
     }
@@ -790,22 +788,18 @@ public final class HttpConnector
 
         synchronized (processors) {
             if (processors.size() > 0) {
-                // if (debug >= 2)
-                // log("createProcessor: Reusing existing processor");
+
                 return ((HttpProcessor) processors.pop());
             }
             if ((maxProcessors > 0) && (curProcessors < maxProcessors)) {
-                // if (debug >= 2)
-                // log("createProcessor: Creating new processor");
+
                 return (newProcessor());
             } else {
                 if (maxProcessors < 0) {
-                    // if (debug >= 2)
-                    // log("createProcessor: Creating new processor");
+
                     return (newProcessor());
                 } else {
-                    // if (debug >= 2)
-                    // log("createProcessor: Cannot create new processor");
+
                     return (null);
                 }
             }
@@ -859,9 +853,6 @@ public final class HttpConnector
      * requests and returning the corresponding responses.
      */
     private HttpProcessor newProcessor() {
-
-        //        if (debug >= 2)
-        //            log("newProcessor: Creating new processor");
         HttpProcessor processor = new HttpProcessor(this, curProcessors++);
         if (processor instanceof Lifecycle) {
             try {
@@ -893,10 +884,7 @@ public final class HttpConnector
      * @throws KeyManagementException    problem in the key management
      *                                   layer (SSL only)
      */
-    private ServerSocket open()
-            throws IOException, KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, UnrecoverableKeyException,
-            KeyManagementException {
+    private ServerSocket open() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
 
         // Acquire the server socket factory for this Connector
         ServerSocketFactory factory = getFactory();
@@ -946,36 +934,25 @@ public final class HttpConnector
             // Accept the next incoming connection from the server socket
             Socket socket = null;
             try {
-                //                if (debug >= 3)
-                //                    log("run: Waiting on serverSocket.accept()");
                 socket = serverSocket.accept();
-                //                if (debug >= 3)
-                //                    log("run: Returned from serverSocket.accept()");
-                if (connectionTimeout > 0)
+                if (connectionTimeout > 0) {
                     socket.setSoTimeout(connectionTimeout);
+                }
                 socket.setTcpNoDelay(tcpNoDelay);
             } catch (AccessControlException ace) {
                 log("socket accept security exception", ace);
                 continue;
             } catch (IOException e) {
-                //                if (debug >= 3)
-                //                    log("run: Accept returned IOException", e);
                 try {
                     // If reopening fails, exit
                     synchronized (threadSync) {
                         if (started && !stopped)
                             log("accept error: ", e);
                         if (!stopped) {
-                            //                    if (debug >= 3)
-                            //                        log("run: Closing server socket");
                             serverSocket.close();
-                            //                        if (debug >= 3)
-                            //                            log("run: Reopening server socket");
                             serverSocket = open();
                         }
                     }
-                    //                    if (debug >= 3)
-                    //                        log("run: IOException processing completed");
                 } catch (IOException ioe) {
                     log("socket reopen, io problem: ", ioe);
                     break;
@@ -1010,21 +987,11 @@ public final class HttpConnector
                 }
                 continue;
             }
-            //            if (debug >= 3)
-            //                log("run: Assigning socket to processor " + processor);
             processor.assign(socket);
-
-            // The processor will recycle itself when it finishes
-
         }
-
-        // Notify the threadStop() method that we have shut ourselves down
-        //        if (debug >= 3)
-        //            log("run: Notifying threadStop() that we have shut down");
         synchronized (threadSync) {
             threadSync.notifyAll();
         }
-
     }
 
 
@@ -1101,11 +1068,9 @@ public final class HttpConnector
     /**
      * Initialize this connector (create ServerSocket here!)
      */
-    public void initialize()
-            throws LifecycleException {
+    public void initialize() throws LifecycleException {
         if (initialized)
-            throw new LifecycleException(
-                    sm.getString("httpConnector.alreadyInitialized"));
+            throw new LifecycleException(sm.getString("httpConnector.alreadyInitialized"));
 
         this.initialized = true;
         Exception eRethrow = null;
@@ -1148,8 +1113,7 @@ public final class HttpConnector
 
         // Validate and update our current state
         if (started)
-            throw new LifecycleException
-                    (sm.getString("httpConnector.alreadyStarted"));
+            throw new LifecycleException(sm.getString("httpConnector.alreadyStarted"));
         threadName = "HttpConnector[" + port + "]";
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
@@ -1159,8 +1123,9 @@ public final class HttpConnector
 
         // Create the specified minimum number of processors
         while (curProcessors < minProcessors) {
-            if ((maxProcessors > 0) && (curProcessors >= maxProcessors))
+            if ((maxProcessors > 0) && (curProcessors >= maxProcessors)) {
                 break;
+            }
             HttpProcessor processor = newProcessor();
             recycle(processor);
         }

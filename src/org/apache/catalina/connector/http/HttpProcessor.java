@@ -43,8 +43,7 @@ import org.apache.catalina.util.StringParser;
  * @deprecated
  */
 
-final class HttpProcessor
-        implements Lifecycle, Runnable {
+final class HttpProcessor implements Lifecycle, Runnable {
 
 
     // ----------------------------------------------------- Manifest Constants
@@ -293,6 +292,7 @@ final class HttpProcessor
             try {
                 wait();
             } catch (InterruptedException e) {
+
             }
         }
 
@@ -899,8 +899,7 @@ final class HttpProcessor
                 output = socket.getOutputStream();
                 response.setStream(output);
                 response.setRequest(request);
-                ((HttpServletResponse) response.getResponse()).setHeader
-                        ("Server", SERVER_INFO);
+                ((HttpServletResponse) response.getResponse()).setHeader("Server", SERVER_INFO);
             } catch (Exception e) {
                 log("process.create", e);
                 ok = false;
@@ -913,8 +912,7 @@ final class HttpProcessor
 
                     parseConnection(socket);
                     parseRequest(input, output);
-                    if (!request.getRequest().getProtocol()
-                            .startsWith("HTTP/0"))
+                    if (!request.getRequest().getProtocol().startsWith("HTTP/0"))
                         parseHeaders(input);
                     if (http11) {
                         // Sending a request acknowledge back to the client if

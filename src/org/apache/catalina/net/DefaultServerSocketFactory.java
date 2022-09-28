@@ -68,13 +68,6 @@ package org.apache.catalina.net;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.KeyManagementException;
-import java.security.cert.CertificateException;
-
-import org.apache.catalina.net.ServerSocketFactory;
 
 
 /**
@@ -99,20 +92,8 @@ public final class DefaultServerSocketFactory implements ServerSocketFactory {
      *
      * @param port the port to listen to
      * @throws IOException               input/output or network error
-     * @throws KeyStoreException         error instantiating the
-     *                                   KeyStore from file (SSL only)
-     * @throws NoSuchAlgorithmException  KeyStore algorithm unsupported
-     *                                   by current provider (SSL only)
-     * @throws CertificateException      general certificate error (SSL only)
-     * @throws UnrecoverableKeyException internal KeyStore problem with
-     *                                   the certificate (SSL only)
-     * @throws KeyManagementException    problem in the key management
-     *                                   layer (SSL only)
      */
-    public ServerSocket createSocket(int port)
-            throws IOException, KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, UnrecoverableKeyException,
-            KeyManagementException {
+    public ServerSocket createSocket(int port) throws IOException{
 
         return (new ServerSocket(port));
 
@@ -128,20 +109,8 @@ public final class DefaultServerSocketFactory implements ServerSocketFactory {
      * @param port    the port to listen to
      * @param backlog how many connections are queued
      * @throws IOException               input/output or network error
-     * @throws KeyStoreException         error instantiating the
-     *                                   KeyStore from file (SSL only)
-     * @throws NoSuchAlgorithmException  KeyStore algorithm unsupported
-     *                                   by current provider (SSL only)
-     * @throws CertificateException      general certificate error (SSL only)
-     * @throws UnrecoverableKeyException internal KeyStore problem with
-     *                                   the certificate (SSL only)
-     * @throws KeyManagementException    problem in the key management
-     *                                   layer (SSL only)
      */
-    public ServerSocket createSocket(int port, int backlog)
-            throws IOException, KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, UnrecoverableKeyException,
-            KeyManagementException {
+    public ServerSocket createSocket(int port, int backlog) throws IOException {
 
         return (new ServerSocket(port, backlog));
 
@@ -158,21 +127,8 @@ public final class DefaultServerSocketFactory implements ServerSocketFactory {
      * @param backlog   how many connections are queued
      * @param ifAddress the network interface address to use
      * @throws IOException               input/output or network error
-     * @throws KeyStoreException         error instantiating the
-     *                                   KeyStore from file (SSL only)
-     * @throws NoSuchAlgorithmException  KeyStore algorithm unsupported
-     *                                   by current provider (SSL only)
-     * @throws CertificateException      general certificate error (SSL only)
-     * @throws UnrecoverableKeyException internal KeyStore problem with
-     *                                   the certificate (SSL only)
-     * @throws KeyManagementException    problem in the key management
-     *                                   layer (SSL only)
      */
-    public ServerSocket createSocket(int port, int backlog,
-                                     InetAddress ifAddress)
-            throws IOException, KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, UnrecoverableKeyException,
-            KeyManagementException {
+    public ServerSocket createSocket(int port, int backlog, InetAddress ifAddress) throws IOException {
 
         return (new ServerSocket(port, backlog, ifAddress));
 
