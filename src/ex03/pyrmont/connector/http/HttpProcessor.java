@@ -51,7 +51,9 @@ public class HttpProcessor {
 
             response.setHeader("Server", "Pyrmont Servlet Container");
 
+            //解析uri信息
             parseRequest(input, output);
+            //解析http请求头
             parseHeaders(input);
 
             //check if this is a request for a servlet or a static resource
@@ -82,11 +84,9 @@ public class HttpProcessor {
      * @throws IOException      if an input/output error occurs
      * @throws ServletException if a parsing error occurs
      */
-    private void parseHeaders(SocketInputStream input)
-            throws IOException, ServletException {
+    private void parseHeaders(SocketInputStream input) throws IOException, ServletException {
         while (true) {
             HttpHeader header = new HttpHeader();
-            ;
 
             // Read the next header
             input.readHeader(header);
@@ -94,8 +94,7 @@ public class HttpProcessor {
                 if (header.valueEnd == 0) {
                     return;
                 } else {
-                    throw new ServletException
-                            (sm.getString("httpProcessor.parseHeaders.colon"));
+                    throw new ServletException(sm.getString("httpProcessor.parseHeaders.colon"));
                 }
             }
 
@@ -198,12 +197,12 @@ public class HttpProcessor {
         String normalizedUri = normalize(uri);
 
         // Set the corresponding request properties
-        ((HttpRequest) request).setMethod(method);
+        request.setMethod(method);
         request.setProtocol(protocol);
         if (normalizedUri != null) {
-            ((HttpRequest) request).setRequestURI(normalizedUri);
+            request.setRequestURI(normalizedUri);
         } else {
-            ((HttpRequest) request).setRequestURI(uri);
+            request.setRequestURI(uri);
         }
 
         if (normalizedUri == null) {

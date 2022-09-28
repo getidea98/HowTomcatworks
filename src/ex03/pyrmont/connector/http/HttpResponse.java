@@ -1,5 +1,6 @@
 package ex03.pyrmont.connector.http;
 
+import ex01.pyrmont.HttpServer;
 import ex03.pyrmont.connector.ResponseStream;
 import ex03.pyrmont.connector.ResponseWriter;
 import ex03.pyrmont.connector.http.Constants;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.ArrayList;
@@ -302,31 +304,36 @@ public class HttpResponse implements HttpServletResponse {
 
     /* This method is used to serve a static page */
     public void sendStaticResource() throws IOException {
+        String responseCode = "404";
+        String responseCodeDesc = "File Not Found";
+        int responseLength = 23;
+        StringBuilder responseContent = new StringBuilder("<h1>File Not Found</h1>");
+
         byte[] bytes = new byte[BUFFER_SIZE];
         FileInputStream fis = null;
         try {
-            /* request.getUri has been replaced by request.getRequestURI */
-            File file = new File(Constants.WEB_ROOT, request.getRequestURI());
-            fis = new FileInputStream(file);
-      /*
-         HTTP Response = Status-Line
-           *(( general-header | response-header | entity-header ) CRLF)
-           CRLF
-           [ message-body ]
-         Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
-      */
-            int ch = fis.read(bytes, 0, BUFFER_SIZE);
-            while (ch != -1) {
-                output.write(bytes, 0, ch);
-                ch = fis.read(bytes, 0, BUFFER_SIZE);
+            File file = new File(HttpServer.WEB_ROOT, request.getRequestURI());
+            if (file.exists()) {
+                responseCode = "200";
+                responseCodeDesc = "OK";
+                responseLength = 0;
+                responseContent.setLength(0);
+                fis = new FileInputStream(file);
+                int ch = fis.read(bytes, 0, BUFFER_SIZE);
+                while (ch != -1) {
+                    responseLength += ch;
+                    responseContent.append(new String(bytes, 0, ch));
+                    ch = fis.read(bytes, 0, BUFFER_SIZE);
+                }
             }
-        } catch (FileNotFoundException e) {
-            String errorMessage = "HTTP/1.1 404 File Not Found\r\n" +
-                    "Content-Type: text/html\r\n" +
-                    "Content-Length: 23\r\n" +
-                    "\r\n" +
-                    "<h1>File Not Found</h1>";
-            output.write(errorMessage.getBytes());
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("HTTP/1.1 ").append(responseCode).append(" ").append(responseCodeDesc).append("\r\n")
+                    .append("Content-Type: text/html\r\n")
+                    .append("Content-Length: ").append(responseLength).append("\r\n").append("\r\n")
+                    .append(responseContent);
+            output.write(stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             if (fis != null)
                 fis.close();
