@@ -372,8 +372,7 @@ public interface Container {
      * @throws ServletException if a ServletException was thrown
      *                          while processing this request
      */
-    public void invoke(Request request, Response response)
-            throws IOException, ServletException;
+    public void invoke(Request request, Response response) throws IOException, ServletException;
 
 
     /**

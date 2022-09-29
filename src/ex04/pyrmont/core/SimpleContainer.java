@@ -25,8 +25,7 @@ import org.apache.catalina.Response;
 
 public class SimpleContainer implements Container {
 
-    public static final String WEB_ROOT =
-            System.getProperty("user.dir") + File.separator + "webroot";
+    public static final String WEB_ROOT = System.getProperty("user.dir") + File.separator + "webroot";
 
     public SimpleContainer() {
     }
@@ -130,8 +129,7 @@ public class SimpleContainer implements Container {
         return null;
     }
 
-    public void invoke(Request request, Response response)
-            throws IOException, ServletException {
+    public void invoke(Request request, Response response) throws IOException, ServletException {
 
         String servletName = ((HttpServletRequest) request).getRequestURI();
         servletName = servletName.substring(servletName.lastIndexOf("/") + 1);
@@ -163,8 +161,6 @@ public class SimpleContainer implements Container {
         } catch (Throwable e) {
             System.out.println(e.toString());
         }
-
-
     }
 
     public Container map(Request request, boolean update) {

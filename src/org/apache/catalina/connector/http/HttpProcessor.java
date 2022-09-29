@@ -884,29 +884,26 @@ final class HttpProcessor implements Lifecycle, Runnable {
             } catch (ServletException e) {
                 ok = false;
                 try {
-                    ((HttpServletResponse) response.getResponse())
-                            .sendError(HttpServletResponse.SC_BAD_REQUEST);
+                    ((HttpServletResponse) response.getResponse()).sendError(HttpServletResponse.SC_BAD_REQUEST);
                 } catch (Exception f) {
-                    ;
+
                 }
             } catch (InterruptedIOException e) {
                 if (debug > 1) {
                     try {
                         log("process.parse", e);
-                        ((HttpServletResponse) response.getResponse())
-                                .sendError(HttpServletResponse.SC_BAD_REQUEST);
+                        ((HttpServletResponse) response.getResponse()).sendError(HttpServletResponse.SC_BAD_REQUEST);
                     } catch (Exception f) {
-                        ;
+
                     }
                 }
                 ok = false;
             } catch (Exception e) {
                 try {
                     log("process.parse", e);
-                    ((HttpServletResponse) response.getResponse()).sendError
-                            (HttpServletResponse.SC_BAD_REQUEST);
+                    ((HttpServletResponse) response.getResponse()).sendError(HttpServletResponse.SC_BAD_REQUEST);
                 } catch (Exception f) {
-                    ;
+
                 }
                 ok = false;
             }
@@ -920,10 +917,9 @@ final class HttpProcessor implements Lifecycle, Runnable {
             } catch (ServletException e) {
                 log("process.invoke", e);
                 try {
-                    ((HttpServletResponse) response.getResponse()).sendError
-                            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    ((HttpServletResponse) response.getResponse()).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } catch (Exception f) {
-                    ;
+
                 }
                 ok = false;
             } catch (InterruptedIOException e) {
@@ -931,10 +927,9 @@ final class HttpProcessor implements Lifecycle, Runnable {
             } catch (Throwable e) {
                 log("process.invoke", e);
                 try {
-                    ((HttpServletResponse) response.getResponse()).sendError
-                            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    ((HttpServletResponse) response.getResponse()).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } catch (Exception f) {
-                    ;
+
                 }
                 ok = false;
             }

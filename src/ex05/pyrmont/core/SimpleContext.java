@@ -617,8 +617,7 @@ public class SimpleContext implements Context, Pipeline {
         return null;
     }
 
-    public void invoke(Request request, Response response)
-            throws IOException, ServletException {
+    public void invoke(Request request, Response response) throws IOException, ServletException {
         pipeline.invoke(request, response);
     }
 
