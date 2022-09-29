@@ -38,8 +38,7 @@ import org.apache.catalina.util.StringManager;
  * @deprecated
  */
 
-public abstract class RequestBase
-        implements ServletRequest, Request {
+public abstract class RequestBase implements ServletRequest, Request {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -339,9 +338,7 @@ public abstract class RequestBase
      * @param socket The socket through which this request was received
      */
     public void setSocket(Socket socket) {
-
         this.socket = socket;
-
     }
 
 
@@ -349,9 +346,7 @@ public abstract class RequestBase
      * Return the input stream associated with this Request.
      */
     public InputStream getStream() {
-
-        return (this.input);
-
+        return this.input;
     }
 
 
@@ -361,9 +356,7 @@ public abstract class RequestBase
      * @param input The new input stream
      */
     public void setStream(InputStream input) {
-
         this.input = input;
-
     }
 
 

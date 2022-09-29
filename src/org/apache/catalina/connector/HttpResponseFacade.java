@@ -17,9 +17,7 @@ import org.apache.catalina.HttpResponse;
  * @version $Revision: 1.5 $ $Date: 2001/09/28 16:53:49 $
  */
 
-public final class HttpResponseFacade
-        extends ResponseFacade
-        implements HttpServletResponse {
+public final class HttpResponseFacade extends ResponseFacade implements HttpServletResponse {
 
 
     // ----------------------------------------------------------- Constructors

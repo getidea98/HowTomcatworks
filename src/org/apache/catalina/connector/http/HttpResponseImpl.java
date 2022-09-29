@@ -18,8 +18,7 @@ import org.apache.catalina.connector.HttpResponseBase;
  * @deprecated
  */
 
-final class HttpResponseImpl
-        extends HttpResponseBase {
+final class HttpResponseImpl extends HttpResponseBase {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -28,8 +27,7 @@ final class HttpResponseImpl
     /**
      * Descriptive information about this Response implementation.
      */
-    protected static final String info =
-            "org.apache.catalina.connector.http.HttpResponseImpl/1.0";
+    protected static final String info = "org.apache.catalina.connector.http.HttpResponseImpl/1.0";
 
 
     /**

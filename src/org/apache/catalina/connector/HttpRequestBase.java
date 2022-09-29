@@ -43,9 +43,7 @@ import org.apache.catalina.util.RequestUtil;
  * @deprecated
  */
 
-public class HttpRequestBase
-        extends RequestBase
-        implements HttpRequest, HttpServletRequest {
+public class HttpRequestBase extends RequestBase implements HttpRequest, HttpServletRequest {
 
 
     protected class PrivilegedGetSession

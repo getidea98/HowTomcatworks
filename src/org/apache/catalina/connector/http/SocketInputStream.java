@@ -285,23 +285,24 @@ public class SocketInputStream extends InputStream {
      * function is meant to be used during the HTTP request header parsing.
      * Do NOT attempt to read the request body using it.
      *
-     * @param requestLine Request line object
+     * @param header Request line object
      * @throws IOException If an exception occurs during the underlying socket
      *                     read operations, or if the given buffer is not big enough to accomodate
      *                     the whole line.
      */
-    public void readHeader(HttpHeader header)
-            throws IOException {
+    public void readHeader(HttpHeader header) throws IOException {
 
         // Recycling check
-        if (header.nameEnd != 0)
+        if (header.nameEnd != 0) {
             header.recycle();
+        }
 
         // Checking for a blank line
         int chr = read();
-        if ((chr == CR) || (chr == LF)) { // Skipping CR
-            if (chr == CR)
+        if (chr == CR || chr == LF) { // Skipping CR
+            if (chr == CR) {
                 read(); // Skipping LF
+            }
             header.nameEnd = 0;
             header.valueEnd = 0;
             return;
@@ -312,7 +313,6 @@ public class SocketInputStream extends InputStream {
         // Reading the header name
 
         int maxRead = header.name.length;
-        int readStart = pos;
         int readCount = 0;
 
         boolean colon = false;
@@ -338,7 +338,6 @@ public class SocketInputStream extends InputStream {
                             (sm.getString("requestStream.readline.error"));
                 }
                 pos = 0;
-                readStart = 0;
             }
             if (buf[pos] == COLON) {
                 colon = true;
@@ -357,7 +356,6 @@ public class SocketInputStream extends InputStream {
         // Reading the header value (which can be spanned over multiple lines)
 
         maxRead = header.value.length;
-        readStart = pos;
         readCount = 0;
 
         int crPos = -2;
@@ -379,10 +377,8 @@ public class SocketInputStream extends InputStream {
                     // buffer
                     int val = read();
                     if (val == -1)
-                        throw new IOException
-                                (sm.getString("requestStream.readline.error"));
+                        throw new IOException(sm.getString("requestStream.readline.error"));
                     pos = 0;
-                    readStart = 0;
                 }
                 if ((buf[pos] == SP) || (buf[pos] == HT)) {
                     pos++;
@@ -396,13 +392,11 @@ public class SocketInputStream extends InputStream {
                 if (readCount >= maxRead) {
                     if ((2 * maxRead) <= HttpHeader.MAX_VALUE_SIZE) {
                         char[] newBuffer = new char[2 * maxRead];
-                        System.arraycopy(header.value, 0, newBuffer, 0,
-                                maxRead);
+                        System.arraycopy(header.value, 0, newBuffer, 0, maxRead);
                         header.value = newBuffer;
                         maxRead = header.value.length;
                     } else {
-                        throw new IOException
-                                (sm.getString("requestStream.readline.toolong"));
+                        throw new IOException(sm.getString("requestStream.readline.toolong"));
                     }
                 }
                 // We're at the end of the internal buffer
@@ -414,7 +408,6 @@ public class SocketInputStream extends InputStream {
                         throw new IOException
                                 (sm.getString("requestStream.readline.error"));
                     pos = 0;
-                    readStart = 0;
                 }
                 if (buf[pos] == CR) {
                 } else if (buf[pos] == LF) {
@@ -439,61 +432,32 @@ public class SocketInputStream extends InputStream {
                 if (readCount >= maxRead) {
                     if ((2 * maxRead) <= HttpHeader.MAX_VALUE_SIZE) {
                         char[] newBuffer = new char[2 * maxRead];
-                        System.arraycopy(header.value, 0, newBuffer, 0,
-                                maxRead);
+                        System.arraycopy(header.value, 0, newBuffer, 0, maxRead);
                         header.value = newBuffer;
                         maxRead = header.value.length;
                     } else {
-                        throw new IOException
-                                (sm.getString("requestStream.readline.toolong"));
+                        throw new IOException(sm.getString("requestStream.readline.toolong"));
                     }
                 }
                 header.value[readCount] = ' ';
                 readCount++;
             }
-
         }
-
         header.valueEnd = readCount;
-
     }
-
 
     /**
      * Read byte.
      */
-    public int read()
-            throws IOException {
+    public int read() throws IOException {
         if (pos >= count) {
             fill();
-            if (pos >= count)
+            if (pos >= count) {
                 return -1;
+            }
         }
         return buf[pos++] & 0xff;
     }
-
-
-    /**
-     *
-     */
-    /*
-    public int read(byte b[], int off, int len)
-        throws IOException {
-
-    }
-    */
-
-
-    /**
-     *
-     */
-    /*
-    public long skip(long n)
-        throws IOException {
-
-    }
-    */
-
 
     /**
      * Returns the number of bytes that can be read from this input

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeMap;
 import javax.servlet.ServletException;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,8 +53,7 @@ final class HttpProcessor implements Lifecycle, Runnable {
     /**
      * Server information string for this server.
      */
-    private static final String SERVER_INFO =
-            ServerInfo.getServerInfo() + " (HTTP/1.1 Connector)";
+    private static final String SERVER_INFO = ServerInfo.getServerInfo() + " (HTTP/1.1 Connector)";
 
 
     // ----------------------------------------------------------- Constructors
@@ -118,14 +118,7 @@ final class HttpProcessor implements Lifecycle, Runnable {
     /**
      * The match string for identifying a session ID parameter.
      */
-    private static final String match =
-            ";" + Globals.SESSION_PARAMETER_NAME + "=";
-
-
-    /**
-     * The match string for identifying a session ID parameter.
-     */
-    private static final char[] SESSION_ID = match.toCharArray();
+    private static final String match = ";" + Globals.SESSION_PARAMETER_NAME + "=";
 
 
     /**
@@ -167,8 +160,7 @@ final class HttpProcessor implements Lifecycle, Runnable {
     /**
      * The string manager for this package.
      */
-    protected StringManager sm =
-            StringManager.getManager(Constants.Package);
+    protected StringManager sm = StringManager.getManager(Constants.Package);
 
 
     /**
@@ -232,20 +224,7 @@ final class HttpProcessor implements Lifecycle, Runnable {
     /**
      * Ack string when pipelining HTTP requests.
      */
-    private static final byte[] ack =
-            (new String("HTTP/1.1 100 Continue\r\n\r\n")).getBytes();
-
-
-    /**
-     * CRLF.
-     */
-    private static final byte[] CRLF = (new String("\r\n")).getBytes();
-
-
-    /**
-     * Line buffer.
-     */
-    //private char[] lineBuffer = new char[4096];
+    private static final byte[] ack = "HTTP/1.1 100 Continue\r\n\r\n".getBytes();
 
 
     /**
@@ -485,19 +464,19 @@ final class HttpProcessor implements Lifecycle, Runnable {
      * @throws IOException      if an input/output error occurs
      * @throws ServletException if a parsing error occurs
      */
-    private void parseConnection(Socket socket)
-            throws IOException, ServletException {
+    private void parseConnection(Socket socket) throws ServletException {
 
-        if (debug >= 2)
-            log("  parseConnection: address=" + socket.getInetAddress() +
-                    ", port=" + connector.getPort());
-        ((HttpRequestImpl) request).setInet(socket.getInetAddress());
-        if (proxyPort != 0)
+        if (debug >= 2) {
+            log("  parseConnection: address=" + socket.getInetAddress() + ", port=" + connector.getPort());
+        }
+        // 发起请求的IP
+        request.setInet(socket.getInetAddress());
+        if (proxyPort != 0) {
             request.setServerPort(proxyPort);
-        else
+        } else {
             request.setServerPort(serverPort);
+        }
         request.setSocket(socket);
-
     }
 
 
@@ -509,9 +488,8 @@ final class HttpProcessor implements Lifecycle, Runnable {
      * @throws IOException      if an input/output error occurs
      * @throws ServletException if a parsing error occurs
      */
-    private void parseHeaders(SocketInputStream input)
-            throws IOException, ServletException {
-
+    private void parseHeaders(SocketInputStream input) throws IOException, ServletException {
+        int ii = 0;
         while (true) {
 
             HttpHeader header = request.allocateHeader();
@@ -522,15 +500,14 @@ final class HttpProcessor implements Lifecycle, Runnable {
                 if (header.valueEnd == 0) {
                     return;
                 } else {
-                    throw new ServletException
-                            (sm.getString("httpProcessor.parseHeaders.colon"));
+                    throw new ServletException(sm.getString("httpProcessor.parseHeaders.colon"));
                 }
             }
-
+            ii++;
             String value = new String(header.value, 0, header.valueEnd);
-            if (debug >= 1)
-                log(" Header " + new String(header.name, 0, header.nameEnd)
-                        + " = " + value);
+            if (debug >= 1) {
+                log(" Header " + new String(header.name, 0, header.nameEnd) + " = " + value);
+            }
 
             // Set the corresponding request headers
             if (header.equals(DefaultHeaders.AUTHORIZATION_NAME)) {
@@ -545,19 +522,16 @@ final class HttpProcessor implements Lifecycle, Runnable {
                         // Override anything requested in the URL
                         if (!request.isRequestedSessionIdFromCookie()) {
                             // Accept only the first session id cookie
-                            request.setRequestedSessionId
-                                    (cookies[i].getValue());
+                            request.setRequestedSessionId(cookies[i].getValue());
                             request.setRequestedSessionCookie(true);
                             request.setRequestedSessionURL(false);
-                            if (debug >= 1)
-                                log(" Requested cookie session id is " +
-                                        ((HttpServletRequest) request.getRequest())
-                                                .getRequestedSessionId());
+                            if (debug >= 1) {
+                                log(" Requested cookie session id is " + ((HttpServletRequest) request.getRequest()).getRequestedSessionId());
+                            }
                         }
                     }
                     if (debug >= 1)
-                        log(" Adding cookie " + cookies[i].getName() + "=" +
-                                cookies[i].getValue());
+                        log(" Adding cookie " + cookies[i].getName() + "=" + cookies[i].getValue());
                     request.addCookie(cookies[i]);
                 }
             } else if (header.equals(DefaultHeaders.CONTENT_LENGTH_NAME)) {
@@ -565,9 +539,7 @@ final class HttpProcessor implements Lifecycle, Runnable {
                 try {
                     n = Integer.parseInt(value);
                 } catch (Exception e) {
-                    throw new ServletException
-                            (sm.getString
-                                    ("httpProcessor.parseHeaders.contentLength"));
+                    throw new ServletException(sm.getString("httpProcessor.parseHeaders.contentLength"));
                 }
                 request.setContentLength(n);
             } else if (header.equals(DefaultHeaders.CONTENT_TYPE_NAME)) {
@@ -580,57 +552,46 @@ final class HttpProcessor implements Lifecycle, Runnable {
                     } else if (connector.getScheme().equals("https")) {
                         request.setServerPort(443);
                     }
-                    if (proxyName != null)
+                    if (proxyName != null) {
                         request.setServerName(proxyName);
-                    else
+                    } else {
                         request.setServerName(value);
+                    }
                 } else {
-                    if (proxyName != null)
+                    if (proxyName != null) {
                         request.setServerName(proxyName);
-                    else
+                    } else {
                         request.setServerName(value.substring(0, n).trim());
-                    if (proxyPort != 0)
+                    }
+                    if (proxyPort != 0) {
                         request.setServerPort(proxyPort);
-                    else {
+                    } else {
                         int port = 80;
                         try {
-                            port =
-                                    Integer.parseInt(value.substring(n + 1).trim());
+                            port = Integer.parseInt(value.substring(n + 1).trim());
                         } catch (Exception e) {
-                            throw new ServletException
-                                    (sm.getString
-                                            ("httpProcessor.parseHeaders.portNumber"));
+                            throw new ServletException(sm.getString("httpProcessor.parseHeaders.portNumber"));
                         }
                         request.setServerPort(port);
                     }
                 }
             } else if (header.equals(DefaultHeaders.CONNECTION_NAME)) {
-                if (header.valueEquals
-                        (DefaultHeaders.CONNECTION_CLOSE_VALUE)) {
+                if (header.valueEquals(DefaultHeaders.CONNECTION_CLOSE_VALUE)) {
                     keepAlive = false;
                     response.setHeader("Connection", "close");
                 }
-                //request.setConnection(header);
-                /*
-                  if ("keep-alive".equalsIgnoreCase(value)) {
-                  keepAlive = true;
-                  }
-                */
+
             } else if (header.equals(DefaultHeaders.EXPECT_NAME)) {
-                if (header.valueEquals(DefaultHeaders.EXPECT_100_VALUE))
+                if (header.valueEquals(DefaultHeaders.EXPECT_100_VALUE)) {
                     sendAck = true;
-                else
-                    throw new ServletException
-                            (sm.getString
-                                    ("httpProcessor.parseHeaders.unknownExpectation"));
+                } else {
+                    throw new ServletException(sm.getString("httpProcessor.parseHeaders.unknownExpectation"));
+                }
             } else if (header.equals(DefaultHeaders.TRANSFER_ENCODING_NAME)) {
                 //request.setTransferEncoding(header);
             }
-
             request.nextHeader();
-
         }
-
     }
 
 
@@ -653,17 +614,14 @@ final class HttpProcessor implements Lifecycle, Runnable {
         // request
         status = Constants.PROCESSOR_ACTIVE;
 
-        String method =
-                new String(requestLine.method, 0, requestLine.methodEnd);
+        String method = new String(requestLine.method, 0, requestLine.methodEnd);
         String uri = null;
-        String protocol = new String(requestLine.protocol, 0,
-                requestLine.protocolEnd);
+        String protocol = new String(requestLine.protocol, 0, requestLine.protocolEnd);
 
-        //System.out.println(" Method:" + method + "_ Uri:" + uri
-        //                   + "_ Protocol:" + protocol);
-
-        if (protocol.length() == 0)
+        if (protocol.length() == 0) {
+            // 获取协议失败，默认使用0.9
             protocol = "HTTP/0.9";
+        }
 
         // Now check if the connection should be kept alive after parsing the
         // request.
@@ -680,23 +638,18 @@ final class HttpProcessor implements Lifecycle, Runnable {
 
         // Validate the incoming request line
         if (method.length() < 1) {
-            throw new ServletException
-                    (sm.getString("httpProcessor.parseRequest.method"));
+            throw new ServletException(sm.getString("httpProcessor.parseRequest.method"));
         } else if (requestLine.uriEnd < 1) {
-            throw new ServletException
-                    (sm.getString("httpProcessor.parseRequest.uri"));
+            throw new ServletException(sm.getString("httpProcessor.parseRequest.uri"));
         }
 
         // Parse any query parameters out of the request URI
         int question = requestLine.indexOf("?");
         if (question >= 0) {
-            request.setQueryString
-                    (new String(requestLine.uri, question + 1,
-                            requestLine.uriEnd - question - 1));
-            if (debug >= 1)
-                log(" Query string is " +
-                        ((HttpServletRequest) request.getRequest())
-                                .getQueryString());
+            request.setQueryString(new String(requestLine.uri, question + 1, requestLine.uriEnd - question - 1));
+            if (debug >= 1) {
+                log(" Query string is " + ((HttpServletRequest) request.getRequest()).getQueryString());
+            }
             uri = new String(requestLine.uri, 0, question);
         } else {
             request.setQueryString(null);
@@ -742,8 +695,9 @@ final class HttpProcessor implements Lifecycle, Runnable {
 
         // Normalize URI (using String operations at the moment)
         String normalizedUri = normalize(uri);
-        if (debug >= 1)
+        if (debug >= 1) {
             log("Normalized: '" + uri + "' to '" + normalizedUri + "'");
+        }
 
         // Set the corresponding request properties
         ((HttpRequest) request).setMethod(method);
@@ -761,10 +715,9 @@ final class HttpProcessor implements Lifecycle, Runnable {
             throw new ServletException("Invalid URI: " + uri + "'");
         }
 
-        if (debug >= 1)
-            log(" Request is '" + method + "' for '" + uri +
-                    "' with protocol '" + protocol + "'");
-
+        if (debug >= 1) {
+            log(" Request is '" + method + "' for '" + uri + "' with protocol '" + protocol + "'");
+        }
     }
 
 
@@ -880,8 +833,7 @@ final class HttpProcessor implements Lifecycle, Runnable {
 
         // Construct and initialize the objects we will need
         try {
-            input = new SocketInputStream(socket.getInputStream(),
-                    connector.getBufferSize());
+            input = new SocketInputStream(socket.getInputStream(), connector.getBufferSize());
         } catch (Exception e) {
             log("process.create", e);
             ok = false;
@@ -909,11 +861,11 @@ final class HttpProcessor implements Lifecycle, Runnable {
             // Parse the incoming request
             try {
                 if (ok) {
-
                     parseConnection(socket);
                     parseRequest(input, output);
-                    if (!request.getRequest().getProtocol().startsWith("HTTP/0"))
+                    if (!request.getRequest().getProtocol().startsWith("HTTP/0")) {
                         parseHeaders(input);
+                    }
                     if (http11) {
                         // Sending a request acknowledge back to the client if
                         // requested.
@@ -961,8 +913,7 @@ final class HttpProcessor implements Lifecycle, Runnable {
 
             // Ask our Container to process this request
             try {
-                ((HttpServletResponse) response).setHeader
-                        ("Date", FastHttpDateFormat.getCurrentDate());
+                ((HttpServletResponse) response).setHeader("Date", FastHttpDateFormat.getCurrentDate());
                 if (ok) {
                     connector.getContainer().invoke(request, response);
                 }
@@ -1039,8 +990,6 @@ final class HttpProcessor implements Lifecycle, Runnable {
             log("process.invoke", e);
         }
         socket = null;
-
-
     }
 
 

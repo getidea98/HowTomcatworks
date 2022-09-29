@@ -20,8 +20,7 @@ import org.apache.catalina.util.Enumerator;
  * @deprecated
  */
 
-final class HttpRequestImpl
-        extends HttpRequestBase {
+final class HttpRequestImpl extends HttpRequestBase {
 
 
     // -------------------------------------------------------------- Constants
@@ -100,9 +99,7 @@ final class HttpRequestImpl
      * @param inet The new InetAddress
      */
     void setInet(InetAddress inet) {
-
         this.inet = inet;
-
     }
 
 

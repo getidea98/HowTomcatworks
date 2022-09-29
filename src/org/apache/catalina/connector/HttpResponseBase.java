@@ -43,9 +43,7 @@ import org.apache.catalina.util.URL;
  * @deprecated
  */
 
-public class HttpResponseBase
-        extends ResponseBase
-        implements HttpResponse, HttpServletResponse {
+public class HttpResponseBase extends ResponseBase implements HttpResponse, HttpServletResponse {
 
 
     protected class PrivilegedFlushBuffer
