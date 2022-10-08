@@ -64,8 +64,9 @@ public class SimpleWrapper implements Wrapper, Pipeline, Lifecycle {
     }
 
     public Servlet loadServlet() throws ServletException {
-        if (instance != null)
+        if (instance != null) {
             return instance;
+        }
 
         Servlet servlet = null;
         String actualClass = servletClass;
@@ -110,11 +111,13 @@ public class SimpleWrapper implements Wrapper, Pipeline, Lifecycle {
     }
 
     public Loader getLoader() {
-        if (loader != null)
+        if (loader != null) {
             return (loader);
-        if (parent != null)
+        }
+        if (parent != null) {
             return (parent.getLoader());
-        return (null);
+        }
+        return null;
     }
 
     public void setLoader(Loader loader) {

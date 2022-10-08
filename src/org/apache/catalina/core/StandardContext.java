@@ -142,11 +142,9 @@ public class StandardContext extends ContainerBase implements Context {
      * Create a new StandardContext component with the default basic Valve.
      */
     public StandardContext() {
-
         super();
         pipeline.setBasic(new StandardContextValve());
         namingResources.setContainer(this);
-
     }
 
 

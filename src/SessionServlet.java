@@ -1,4 +1,3 @@
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -7,8 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class SessionServlet extends HttpServlet {
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("SessionServlet -- service");
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
@@ -17,8 +15,7 @@ public class SessionServlet extends HttpServlet {
         out.println("<body>");
         String value = request.getParameter("value");
         HttpSession session = request.getSession(true);
-        out.println("<br>the previous value is " +
-                (String) session.getAttribute("value"));
+        out.println("<br>the previous value is " + session.getAttribute("value"));
         out.println("<br>the current value is " + value);
         session.setAttribute("value", value);
         out.println("<br><hr>");
